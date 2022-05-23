@@ -1,7 +1,7 @@
 {
-  "name": "yygh-site",
+  "name": "mmma-sote",
   "version": "1.0.0",
-  "description": "楼易健康前端平台",
+  "description": "预约挂号统一平台",
   "author": "hungwen.tseng@gmail.com>",
   "private": true,
   "scripts": {

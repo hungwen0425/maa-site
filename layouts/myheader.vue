@@ -37,13 +37,7 @@
       <div class="right-wrapper">
         <span class="v-link clickable">帮助中心</span>
 
-        <span
-          v-if="name == ''"
-          class="v-link clickable"
-          @click="showLogin()"
-          id="loginDialog"
-          >登录/注册</span
-        >
+        <span v-if="name == ''" class="v-link clickable" @click="showLogin()" id="loginDialog" >登录/注册</span>
 
         <el-dropdown v-if="name != ''" @command="loginMenu">
           <span class="el-dropdown-link">
@@ -189,12 +183,14 @@ const defaultDialogAtrr = {
 export default {
   data() {
     return {
+
       userInfo: {
         phone: "",
         code: "",
-        openid: "",
+        openid: ""
       },
 
+      hosname: "",
       dialogUserFormVisible: false,
       // 弹出层相关属性
       dialogAtrr: defaultDialogAtrr,
@@ -219,14 +215,13 @@ export default {
     //初始化微信js
     const script = document.createElement("script");
     script.type = "text/javascript";
-    script.src =
-      "https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js";
+    script.src = "https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js";
     document.body.appendChild(script);
 
     // 微信登录回调处理
     let self = this;
     window["loginCallback"] = (name, token, openid) => {
-      debugger;
+      // debugger;
       self.loginCallback(name, token, openid);
     };
   },
@@ -267,7 +262,7 @@ export default {
 
     // 登录
     login() {
-      debugger;
+      //debugger;
       this.userInfo.code = this.dialogAtrr.inputValue;
 
       if (this.dialogAtrr.loginBtn == "正在提交...") {
@@ -285,9 +280,10 @@ export default {
       }
 
       this.dialogAtrr.loginBtn = "正在提交...";
-      userInfoApi
-        .login(this.userInfo)
+      console.log("正在提交...");
+      userInfoApi.login(this.userInfo)
         .then((response) => {
+          console.log("hahahahahahaha...............");
           console.log(response.data);
           // 登录成功 设置cookie
           this.setCookies(response.data.name, response.data.token);
@@ -298,6 +294,7 @@ export default {
     },
 
     setCookies(name, token) {
+      console.log("I am here");
       cookie.set("token", token, { domain: "localhost" });
       cookie.set("name", name, { domain: "localhost" });
       window.location.reload();
@@ -305,7 +302,7 @@ export default {
 
     // 获取验证码
     getCodeFun() {
-      if (!/^1[34578]\d{9}$/.test(this.userInfo.phone)) {
+      if (!/^09[0-9]{8}$/.test(this.userInfo.phone)) {
         this.$message.error("手机号码不正确");
         return;
       }
@@ -317,14 +314,13 @@ export default {
       this.dialogAtrr.loginBtn = "马上登录";
 
       // 控制重复发送
-      if (!this.dialogAtrr.sending) return;
+      if (!this.dialogAtrr.sending)
+        return;
 
       // 发送短信验证码
       this.timeDown();
       this.dialogAtrr.sending = false;
-      smsApi
-        .sendCode(this.userInfo.phone)
-        .then((response) => {
+      smsApi.sendCode(this.userInfo.phone).then((response) => {
           this.timeDown();
         })
         .catch((e) => {
@@ -339,7 +335,7 @@ export default {
       if (this.clearSmsTime) {
         clearInterval(this.clearSmsTime);
       }
-      this.dialogAtrr.second = 60;
+      this.dialogAtrr.second = 180;
 
       this.dialogAtrr.labelTips = "验证码已发送至" + this.userInfo.phone;
       this.clearSmsTime = setInterval(() => {
@@ -363,7 +359,7 @@ export default {
       let token = cookie.get("token");
       if (token) {
         this.name = cookie.get("name");
-        console.log(this.name);
+        console.log(this.name + "hahahah");
       }
     },
 
