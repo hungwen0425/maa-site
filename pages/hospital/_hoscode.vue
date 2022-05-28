@@ -98,6 +98,7 @@ import '~/assets/css/hospital.css'
 import cookie from 'js-cookie'
 import hospitalApi from '@/api/hosp/hospital'
 import userInfoApi from '@/api/user/userInfo'
+import {setCookie, getCookie} from "@/utils/cookie";
 
 export default {
   data() {
@@ -139,7 +140,7 @@ export default {
     schedule(depcode) {
       // debugger
       // 登录判断
-      let token = cookie.get('token')
+      let token = getCookie('role')
       if (!token) {
         loginEvent.$emit('loginDialogEvent')
         return

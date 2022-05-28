@@ -62,13 +62,13 @@
                       :show-file-list="false"
                       :on-success="onUploadSuccess">
                       <div class="upload-inner-wrapper">
-                        <img v-if="userAuah.certificatesUrl" :src="userAuah.certificatesUrl" class="avatar">
+                        <img v-if="userAuah.certificatesUrl" :src="userAuah.certificatesUrl" class="avatar"/>
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         <div v-if="!userAuah.certificatesUrl" class="text"> 上传证件合照</div>
                       </div>
                     </el-upload>
                   </div>
-                  <img src="//img.114yygh.com/static/web/auth_example.png" class="example">
+                  <img src="//img.114yygh.com/static/web/auth_example.png" class="example"/>
                 </div>
               </el-form-item>
             </el-form>
@@ -83,14 +83,17 @@
 
         <div class="context-container" v-if="userInfo.authStatus != 0">
           <div>
-            <el-form :model="formData" label-width="110px" label-position="right">
+            <el-form v-model="formData" label-width="110px" label-position="right">
               <el-form-item prop="name" label="姓名：" class="form-normal">
                 <div class="name-input">
                   {{ userInfo.name }}
                 </div>
               </el-form-item>
-              <el-form-item prop="name" label="证件类型：">
-                {{ userInfo.param.certificatesTypeString }}
+              <el-form-item prop="name" label="证件类型：" v-if="userInfo.certificatesType == 10" >
+                身份证
+              </el-form-item>
+              <el-form-item prop="name" label="证件类型：" v-if="userInfo.certificatesType == 20" >
+                户口本
               </el-form-item>
               <el-form-item prop="name" label="证件号码：">
                 {{ userInfo.certificatesNo }}
@@ -109,84 +112,86 @@
 </template>
 
 <script>
-import '~/assets/css/hospital_personal.css'
-import '~/assets/css/hospital.css'
-import '~/assets/css/personal.css'
+  import '~/assets/css/hospital_personal.css'
+  import '~/assets/css/hospital.css'
+  import '~/assets/css/personal.css'
 
-import dictApi from '@/api/cmn/dict'
-import userInfoApi from '@/api/user/userInfo'
+  import dictApi from '@/api/cmn/dict'
+  import userInfoApi from '@/api/user/userInfo'
 
-const defaultForm = {
-  name: '',
-  certificatesType: '',
-  certificatesNo: '',
-  certificatesUrl: ''
-}
-export default {
+  const defaultForm = {
+    name: '',
+    certificatesType: '',
+    certificatesNo: '',
+    certificatesUrl: ''
+  }
+  export default {
 
-  data() {
-    return {
-      userAuah: defaultForm,
-      certificatesTypeList: [],
-      fileUrl:'http://localhost/api/oss/file/fileUpload?fileHost=userAuah',
+    data() {
+      return {
+        formData:'',
+        userAuah: defaultForm,
+        certificatesTypeList: [],
+        fileUrl:'http://localhost/api/oss/file/fileUpload?fileHost=userAuah',
 
-      userInfo: {
-        param: {}
+        userInfo: {
+          param: {}
+        },
+
+        submitBnt: '提交'
+      }
+    },
+
+    created() {
+      this.init()
+    },
+
+    methods: {
+      init() {
+        this.getUserInfo()
+
+        this.getDict()
       },
 
-      submitBnt: '提交'
-    }
-  },
+      getUserInfo() {
+        userInfoApi.getUserInfo().then(response => {
+          console.log(response.data);
+          this.userInfo = response.data
+        })
+      },
 
-  created() {
-    this.init()
-  },
+      saveUserAuah() {
+        if(this.submitBnt == '正在提交...') {
+          this.$message.info('重复提交')
+          return
+        }
 
-  methods: {
-    init() {
-      this.getUserInfo()
+        this.submitBnt = '正在提交...'
+        userInfoApi.saveUserAuah(this.userAuah).then(response => {
+          this.$message.success("提交成功")
+          window.location.reload()
+        }).catch(e => {
+          this.submitBnt = '提交'
+        })
+      },
 
-      this.getDict()
-    },
+      getDict() {
+        dictApi.findByDictCode("CertificatesType").then(response => {
+          this.certificatesTypeList = response.data
+        })
+      },
 
-    getUserInfo() {
-      userInfoApi.getUserInfo().then(response => {
-        this.userInfo = response.data
-      })
-    },
-
-    saveUserAuah() {
-      if(this.submitBnt == '正在提交...') {
-        this.$message.info('重复提交')
-        return
+      onUploadSuccess(response, file) {
+        debugger
+        if(response.code !== 200) {
+          this.$message.error("上传失败")
+          return
+        }
+        // 填充上传文件列表
+        this.userAuah.certificatesUrl = file.response.data
       }
-
-      this.submitBnt = '正在提交...'
-      userInfoApi.saveUserAuah(this.userAuah).then(response => {
-        this.$message.success("提交成功")
-        window.location.reload()
-      }).catch(e => {
-        this.submitBnt = '提交'
-      })
-    },
-
-    getDict() {
-      dictApi.findByDictCode("CertificatesType").then(response => {
-        this.certificatesTypeList = response.data
-      })
-    },
-
-    onUploadSuccess(response, file) {
-      debugger
-      if(response.code !== 200) {
-        this.$message.error("上传失败")
-        return
-      }
-      // 填充上传文件列表
-      this.userAuah.certificatesUrl = file.response.data
     }
   }
-}
 </script>
 <style>
   .header-wrapper .title {

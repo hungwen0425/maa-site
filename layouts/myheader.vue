@@ -37,9 +37,9 @@
       <div class="right-wrapper">
         <span class="v-link clickable">帮助中心</span>
 
-        <span v-if="name == ''" class="v-link clickable" @click="showLogin()" id="loginDialog" >登录/注册</span>
+        <span v-if="name === ''" class="v-link clickable" @click="showLogin()" id="loginDialog" >登录/注册</span>
 
-        <el-dropdown v-if="name != ''" @command="loginMenu">
+        <el-dropdown v-if="name !== ''" @command="loginMenu">
           <span class="el-dropdown-link">
             {{ name }}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
@@ -129,26 +129,20 @@
         <div class="info-wrapper">
           <div class="code-wrapper">
             <div>
-              <img
-                src="//img.114yygh.com/static/web/code_login_wechat.png"
-                class="code-img"
-              />
+              <img src="//img.114yygh.com/static/web/code_login_wechat.png" class="code-img"/>
               <div class="code-text">
                 <span class="iconfont icon"></span>微信扫一扫关注
               </div>
               <div class="code-text">“快速预约挂号”</div>
             </div>
             <div class="wechat-code-wrapper">
-              <img
-                src="//img.114yygh.com/static/web/code_app.png"
-                class="code-img"
-              />
+              <img src="//img.114yygh.com/static/web/code_app.png" class="code-img" />
               <div class="code-text">扫一扫下载</div>
               <div class="code-text">“预约挂号”APP</div>
             </div>
           </div>
           <div class="slogan">
-            <div>xxxxxx官方指定平台</div>
+            <div>楼易健康官方指定平台</div>
             <div>快速挂号 安全放心</div>
           </div>
         </div>
@@ -157,13 +151,14 @@
   </div>
 </template>
 <script>
-import cookie from "js-cookie";
+// import cookie from "js-cookie";
 import Vue from "vue";
 
 import userInfoApi from "@/api/user/userInfo";
 import smsApi from "@/api/sms/sms";
 import hospitalApi from "@/api/hosp/hospital";
 import weixinApi from "@/api/user/weixin";
+import {setCookie, getCookie} from "@/utils/cookie";
 
 const defaultDialogAtrr = {
   showLoginType: "phone", // 控制手机登录与微信登录切换
@@ -224,6 +219,10 @@ export default {
       // debugger;
       self.loginCallback(name, token, openid);
     };
+
+    const role = getCookie('role')
+
+    this.name = role
   },
 
   methods: {
@@ -280,12 +279,11 @@ export default {
       }
 
       this.dialogAtrr.loginBtn = "正在提交...";
-      console.log("正在提交...");
       userInfoApi.login(this.userInfo)
         .then((response) => {
-          console.log("hahahahahahaha...............");
           console.log(response.data);
           // 登录成功 设置cookie
+
           this.setCookies(response.data.name, response.data.token);
         })
         .catch((e) => {
@@ -294,9 +292,19 @@ export default {
     },
 
     setCookies(name, token) {
+
+      setCookie('role', name, 1)
+
+      setCookie('token', token, 1)
+      setCookie('token', token, 1)
       console.log("I am here");
-      cookie.set("token", token, { domain: "localhost" });
-      cookie.set("name", name, { domain: "localhost" });
+      // cookie.set("token", token, { domain: "localhost" });
+      // cookie.set("name", name, { domain: "localhost" });
+      // Vue.cookie.set("token", token, { domain: "localhost" });
+      // Vue.cookie.set("name", name, { domain: "localhost" });
+
+      // console.log(document.cookie);
+      // debugger
       window.location.reload();
     },
 
@@ -356,17 +364,17 @@ export default {
     },
 
     showInfo() {
-      let token = cookie.get("token");
+      let token  = getCookie('token')  ;
       if (token) {
-        this.name = cookie.get("name");
+        this.name = getCookie('name');
         console.log(this.name + "hahahah");
       }
     },
 
     loginMenu(command) {
       if ("/logout" == command) {
-        cookie.set("name", "", { domain: "localhost" });
-        cookie.set("token", "", { domain: "localhost" });
+        // cookie.set("name", "", { domain: "localhost" });
+        // cookie.set("token", "", { domain: "localhost" });
 
         //跳转页面
         window.location.href = "/";
