@@ -62,8 +62,7 @@
       top="50px"
       :append-to-body="true"
       width="960px"
-      @close="closeDialog()"
-    >
+      @close="closeDialog()">
       <div class="container">
         <!-- 手机登录 #start -->
         <div class="operate-view" v-if="dialogAtrr.showLoginType === 'phone'">
@@ -98,18 +97,18 @@
                 {{ dialogAtrr.loginBtn }}
               </div>
             </div>
-            <div class="bottom">
+            <!-- <div class="bottom">
               <div class="wechat-wrapper" @click="weixinLogin()">
                 <span class="iconfont icon"></span>
               </div>
               <span class="third-text"> 第三方账号登录 </span>
-            </div>
+            </div> -->
           </div>
         </div>
         <!-- 手机登录 #end -->
 
         <!-- 微信登录 #start -->
-        <div class="operate-view" v-if="dialogAtrr.showLoginType === 'weixin'">
+        <!-- <div class="operate-view" v-if="dialogAtrr.showLoginType === 'weixin'">
           <div class="wrapper wechat" style="height: 400px">
             <div>
               <div id="weixinLogin"></div>
@@ -123,10 +122,10 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
         <!-- 微信登录 #end -->
 
-        <div class="info-wrapper">
+        <!-- <div class="info-wrapper">
           <div class="code-wrapper">
             <div>
               <img src="//img.114yygh.com/static/web/code_login_wechat.png" class="code-img"/>
@@ -145,7 +144,7 @@
             <div>楼易健康官方指定平台</div>
             <div>快速挂号 安全放心</div>
           </div>
-        </div>
+        </div> -->
       </div>
     </el-dialog>
   </div>
@@ -157,7 +156,7 @@ import Vue from "vue";
 import userInfoApi from "@/api/user/userInfo";
 import smsApi from "@/api/sms/sms";
 import hospitalApi from "@/api/hosp/hospital";
-import weixinApi from "@/api/user/weixin";
+// import weixinApi from "@/api/user/weixin";
 import {setCookie, getCookie} from "@/utils/cookie";
 
 const defaultDialogAtrr = {
@@ -178,18 +177,15 @@ const defaultDialogAtrr = {
 export default {
   data() {
     return {
-
       userInfo: {
         phone: "",
         code: "",
         openid: ""
       },
-
       hosname: "",
       dialogUserFormVisible: false,
       // 弹出层相关属性
       dialogAtrr: defaultDialogAtrr,
-
       name: "", // 用户登录显示的名称
     };
   },
@@ -208,17 +204,17 @@ export default {
     // 触发事件，显示登录层：loginEvent.$emit('loginDialogEvent')
 
     //初始化微信js
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = "https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js";
-    document.body.appendChild(script);
+    // const script = document.createElement("script");
+    // script.type = "text/javascript";
+    // script.src = "https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js";
+    // document.body.appendChild(script);
 
-    // 微信登录回调处理
-    let self = this;
-    window["loginCallback"] = (name, token, openid) => {
-      // debugger;
-      self.loginCallback(name, token, openid);
-    };
+    // // 微信登录回调处理
+    // let self = this;
+    // window["loginCallback"] = (name, token, openid) => {
+    //   // debugger;
+    //   self.loginCallback(name, token, openid);
+    // };
 
     const role = getCookie('role')
 
@@ -230,7 +226,6 @@ export default {
       // 打开手机登录层，绑定手机号，改逻辑与手机登录一致
       if (openid != "") {
         this.userInfo.openid = openid;
-
         this.showLogin();
       } else {
         this.setCookies(name, token);
@@ -242,7 +237,6 @@ export default {
       // 判断是获取验证码还是登录
       if (this.dialogAtrr.loginBtn == "获取验证码") {
         this.userInfo.phone = this.dialogAtrr.inputValue;
-
         // 获取验证码
         this.getCodeFun();
       } else {
@@ -283,7 +277,6 @@ export default {
         .then((response) => {
           console.log(response.data);
           // 登录成功 设置cookie
-
           this.setCookies(response.data.name, response.data.token);
         })
         .catch((e) => {
@@ -294,7 +287,7 @@ export default {
     setCookies(name, token) {
 
       setCookie('role', name, 1)
-
+      setCookie('name', name, 1)
       setCookie('token', token, 1)
       setCookie('token', token, 1)
       console.log("I am here");
@@ -302,7 +295,6 @@ export default {
       // cookie.set("name", name, { domain: "localhost" });
       // Vue.cookie.set("token", token, { domain: "localhost" });
       // Vue.cookie.set("name", name, { domain: "localhost" });
-
       // console.log(document.cookie);
       // debugger
       window.location.reload();
@@ -367,15 +359,14 @@ export default {
       let token  = getCookie('token')  ;
       if (token) {
         this.name = getCookie('name');
-        console.log(this.name + "hahahah");
+        // console.log(this.name + "hahahah");
       }
     },
 
     loginMenu(command) {
       if ("/logout" == command) {
-        // cookie.set("name", "", { domain: "localhost" });
-        // cookie.set("token", "", { domain: "localhost" });
-
+       setCookie('role', '', 1)
+       setCookie('token', '', 1)
         //跳转页面
         window.location.href = "/";
       } else {
@@ -398,22 +389,22 @@ export default {
       window.location.href = "/hospital/" + item.hoscode;
     },
 
-    weixinLogin() {
-      this.dialogAtrr.showLoginType = "weixin";
+    // weixinLogin() {
+    //   this.dialogAtrr.showLoginType = "weixin";
 
-      weixinApi.getLoginParam().then((response) => {
-        var obj = new WxLogin({
-          self_redirect: true,
-          id: "weixinLogin", // 需要显示的容器id
-          appid: response.data.appid, // 公众号appid wx*******
-          scope: response.data.scope, // 网页默认即可
-          redirect_uri: response.data.redirectUri, // 授权成功后回调的url
-          state: response.data.state, // 可设置为简单的随机数加session用来校验
-          style: "black", // 提供"black"、"white"可选。二维码的样式
-          href: "", // 外部css文件url，需要https
-        });
-      });
-    },
+    //   weixinApi.getLoginParam().then((response) => {
+    //     var obj = new WxLogin({
+    //       self_redirect: true,
+    //       id: "weixinLogin", // 需要显示的容器id
+    //       appid: response.data.appid, // 公众号appid wx*******
+    //       scope: response.data.scope, // 网页默认即可
+    //       redirect_uri: response.data.redirectUri, // 授权成功后回调的url
+    //       state: response.data.state, // 可设置为简单的随机数加session用来校验
+    //       style: "black", // 提供"black"、"white"可选。二维码的样式
+    //       href: "", // 外部css文件url，需要https
+    //     });
+    //   });
+    // },
 
     phoneLogin() {
       this.dialogAtrr.showLoginType = "phone";

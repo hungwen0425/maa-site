@@ -191,7 +191,7 @@ export default {
 
     queryPayStatus(orderId) {
       weixinApi.queryPayStatus(orderId).then(response => {
-        debugger
+        // debugger
         if (response.message == '支付中') {
           return
         }
@@ -201,7 +201,7 @@ export default {
     },
 
     closeDialog() {
-      debugger
+      // debugger
       if(this.timer) {
         clearInterval(this.timer);
       }

@@ -19,7 +19,7 @@ export default {
     })
   },
   //会员认证
-  saveUserAuah(userAuth) {
+  saveUserAuth(userAuth) {
     return request({
       url: `${api_name}/auth/userAuth`,
       method: 'post',

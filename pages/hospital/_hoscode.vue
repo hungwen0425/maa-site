@@ -95,7 +95,6 @@
 import '~/assets/css/hospital_personal.css'
 import '~/assets/css/hospital.css'
 
-import cookie from 'js-cookie'
 import hospitalApi from '@/api/hosp/hospital'
 import userInfoApi from '@/api/user/userInfo'
 import {setCookie, getCookie} from "@/utils/cookie";
@@ -140,7 +139,9 @@ export default {
     schedule(depcode) {
       // debugger
       // 登录判断
-      let token = getCookie('role')
+      let token = getCookie('token')
+      // console.log("token: " + token)
+
       if (!token) {
         loginEvent.$emit('loginDialogEvent')
         return
@@ -155,7 +156,6 @@ export default {
           return
         }
       })
-
       window.location.href = '/hospital/schedule?hoscode=' + this.hospital.hoscode + "&depcode=" + depcode
     }
   }
