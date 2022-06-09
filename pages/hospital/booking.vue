@@ -157,6 +157,7 @@ export default {
 
   data() {
     return {
+      form: null,
       scheduleId: null,
       schedule: {
         param: {}
@@ -209,7 +210,7 @@ export default {
       }
       // 防止重复提交
       if(this.submitBnt == '正在提交...') {
-        this.$message.error('重复提交')
+        this.$message.error('不能重复提交')
         return
       }
 

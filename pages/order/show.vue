@@ -106,7 +106,6 @@
         <div class="operate-view" style="height: 350px;">
           <div class="wrapper wechat">
             <div>
-              <!--                <img src="images/weixin.jpg" alt="">-->
               <qriously :value="payObj.codeUrl" :size="220"/>
               <div style="text-align: center;line-height: 25px;margin-bottom: 40px;">
                 请使用微信扫一扫<br/>
@@ -132,6 +131,7 @@ export default {
 
   data() {
     return {
+      form: null,
       orderId: null,
       orderInfo: {
         param: {}
@@ -182,6 +182,7 @@ export default {
           this.dialogPayVisible = false
           this.$message.error("支付错误")
         } else {
+          //每隔3秒鐘調用查詢支付狀態api
           this.timer = setInterval(() => {
             this.queryPayStatus(this.orderId)
           }, 3000);

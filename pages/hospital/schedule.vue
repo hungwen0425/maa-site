@@ -4,13 +4,13 @@
     <!--左侧导航 #start -->
     <div class="nav left-nav">
       <div class="nav-item selected">
-        <span class="v-link selected dark" :onclick="'javascript:window.location=\'/hospital/'+hoscode+'\''">预约挂号 </span>
+        <span class="v-link selected dark" :onclick="'javascript:window.location=\'/hosp/'+hoscode+'\''">预约挂号 </span>
       </div>
       <div class="nav-item ">
-        <span class="v-link clickable dark" :onclick="'javascript:window.location=\'/hospital/detail/'+hoscode+'\''"> 医院详情 </span>
+        <span class="v-link clickable dark" :onclick="'javascript:window.location=\'/hosp/detail/'+hoscode+'\''"> 医院详情 </span>
       </div>
       <div class="nav-item">
-        <span class="v-link clickable dark" :onclick="'javascript:window.location=\'/hospital/notice/'+hoscode+'\''"> 预约须知 </span>
+        <span class="v-link clickable dark" :onclick="'javascript:window.location=\'/hosp/notice/'+hoscode+'\''"> 预约须知 </span>
       </div>
       <div class="nav-item "><span
         class="v-link clickable dark"> 停诊信息 </span>
@@ -20,7 +20,6 @@
       </div>
     </div>
     <!-- 左侧导航 #end -->
-
     <!-- 右侧内容 #start -->
     <div class="page-container">
       <div class="hospital-source-list">
@@ -34,7 +33,6 @@
         <div class="mt60">
           <div class="title-wrapper">{{ baseMap.workDateString }}</div>
           <div class="calendar-list-wrapper">
-
             <!-- item.depNumber == -1 ? 'gray space' : item.depNumber == 0 ? 'gray' : 'small small-space'-->
             <!-- selected , index == activeIndex ? 'selected' : ''-->
             <div :class="'calendar-item '+item.curClass" style="width: 124px;"
@@ -56,7 +54,6 @@
              @current-change="getPage">
           </el-pagination>
         </div>
-
         <!-- 即将放号 #start-->
         <div class="countdown-wrapper mt60" v-if="!tabShow">
           <div class="countdonw-title"> {{ time }}<span class="v-link selected">{{ baseMap.releaseTime }} </span>放号</div>
@@ -67,7 +64,6 @@
           </div>
         </div>
         <!-- 即将放号 #end-->
-
         <!-- 号源列表 #end -->
         <!-- 上午号源 #start -->
         <div class="mt60" v-if="tabShow">
@@ -96,7 +92,6 @@
                 </div>
               </div>
             </div>
-
           </div>
         </div>
         <!-- 上午号源 #end -->
@@ -127,7 +122,6 @@
                 </div>
               </div>
             </div>
-
           </div>
         </div>
         <!-- 下午号源 #end -->
@@ -137,26 +131,22 @@
   </div>
   <!-- footer -->
 </template>
-
 <script>
 import '~/assets/css/hospital_personal.css'
 import '~/assets/css/hospital.css'
 
 import hospitalApi from '@/api/hosp/hospital'
 export default {
-
   data() {
     return {
       hoscode: null,
       depcode: null,
       workDate: null,
-
       bookingScheduleList: [],
       scheduleList : [],
       baseMap : {},
       nextWorkDate: null, // 下一页第一个日期
       preWorkDate: null, // 上一页第一个日期
-
       tabShow: true, //挂号列表与即将挂号切换
       activeIndex: 0,
 
@@ -176,7 +166,6 @@ export default {
     this.hoscode = this.$route.query.hoscode
     this.depcode = this.$route.query.depcode
     this.workDate = this.getCurDate()
-
     this.getBookingScheduleRule()
   },
 
@@ -214,6 +203,7 @@ export default {
     findScheduleList() {
       hospitalApi.findScheduleList(this.hoscode, this.depcode, this.workDate).then(response => {
         this.scheduleList = response.data
+        console.log(response.data)
       })
     },
 
@@ -313,7 +303,6 @@ export default {
     },
 
     booking(scheduleId, availableNumber) {
-      // debugger
       if(availableNumber == 0 || this.pageFirstStatus == -1) {
         this.$message.error('不能预约')
       } else {
