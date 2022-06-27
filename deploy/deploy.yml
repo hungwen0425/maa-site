@@ -53,7 +53,7 @@ metadata:
   labels:
     app: maa-site
   name: maa-site
-  namespace: his
+  namespace: maa
 spec:
   ports:
     - name: http
