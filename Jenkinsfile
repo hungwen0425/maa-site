@@ -56,22 +56,14 @@ pipeline {
         }
 
         stage('部署到dev环境') {
+            agent none
             steps {
-                  container ('nodejs') {
-                       withCredentials([
-                           kubeconfigFile(
-                           credentialsId: env.KUBECONFIG_CREDENTIAL_ID,
-                           variable: 'KUBECONFIG')
-                           ]) {
-                           sh 'envsubst < deploy/deploy.yml | kubectl apply -f -'
-                       }
-                  }
-              }
+                kubernetesDeploy(configs: 'deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+            }
         }
 
-        //1、配置全系统的邮件：                   全系统的监控
-        //2、修改ks-jenkins的配置，里面的邮件；   流水线发邮件
-        stage('发送确认邮件') {
+
+        stage('流水線完成') {
             agent none
             steps {
                 sh 'echo "Pipline finish sucessful !! "'
