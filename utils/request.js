@@ -4,8 +4,8 @@ import {setCookie, getCookie} from "@/utils/cookie";
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: 'http://localhost',
-  // baseURL: 'http://139.198.165.238:32607', //生产环境
+  // baseURL: 'http://localhost',
+  baseURL: 'http://server-gateway.maa:8080', //生产环境
   timeout: 15000 // 请求超时时间
 })
 
