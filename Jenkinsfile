@@ -10,7 +10,7 @@ pipeline {
             agent none
             steps {
                 container('nodejs') {
-                    git(url: 'https://gitee.com/leifengyang/yygh-site.git', credentialsId: 'gitee-id', branch: 'master', changelog: true, poll: false)
+                    git(url: 'https://github.com/hungwen0425/maa-site.git', credentialsId: 'github-id', branch: 'main', changelog: true, poll: false)
                     sh 'ls -al'
                 }
 
@@ -23,7 +23,7 @@ pipeline {
                 container('nodejs') {
                     sh 'ls'
                     sh 'npm install --registry=https://registry.npm.taobao.org'
-					sh 'npm run build'
+					          sh 'npm run build'
                 }
 
             }
@@ -44,8 +44,8 @@ pipeline {
             agent none
             steps {
                 container('nodejs') {
-                    withCredentials([usernamePassword(credentialsId : 'docker.io' ,usernameVariable : 'DOCKER_USERNAME' ,passwordVariable : 'DOCKER_PASSWORD' ,)]) {
-                        sh 'echo "$DOCKER_PWD_VAR" | docker login $REGISTRY -u "$DOCKER_USERNAME" --password-stdin'
+                    withCredentials([usernamePassword(credentialsId : 'dockerhub-id' ,passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME')]) {
+                        sh 'echo "$DOCKER_PASSWORD" | docker login $REGISTRY -u "$DOCKER_USERNAME" --password-stdin'
                         sh 'docker tag maa-site:latest $REGISTRY/$DOCKERHUB_NAMESPACE/maa-site:SNAPSHOT-$BUILD_NUMBER'
                         sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/maa-site:SNAPSHOT-$BUILD_NUMBER'
                     }
@@ -77,9 +77,7 @@ pipeline {
         GITHUB_CREDENTIAL_ID = 'github-id'
         KUBECONFIG_CREDENTIAL_ID = 'demo-kubeconfig'
         REGISTRY = 'docker.io'
-        DOCKERHUB_NAMESPACE = 'lfy_hello'
-        GITHUB_ACCOUNT = 'kubesphere'
-        APP_NAME = 'devops-java-sample'
-        ALIYUNHUB_NAMESPACE = 'lfy_hello'
+        GITHUB_ACCOUNT = 'hungwen0425'
+        DOCKERHUB_NAMESPACE = 'hungwen0425'
     }
 }
