@@ -58,7 +58,15 @@ pipeline {
         stage('部署到dev环境') {
             agent none
             steps {
-                kubernetesDeploy(configs: 'deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+                container ('nodejs') {
+                       withCredentials([
+                           kubeconfigFile(
+                           credentialsId: env.KUBECONFIG_CREDENTIAL_ID,
+                           variable: 'KUBECONFIG')
+                           ]) {
+                           sh 'envsubst < deploy/deploy.yml | kubectl apply -f -'
+                       }
+                  }
             }
         }
 
